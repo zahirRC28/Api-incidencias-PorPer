@@ -18,7 +18,7 @@ const queries = {
         RETURNING *;
     `,
     todoLosUserMenosYo:`
-        SELECT u.id_usuario, u.nombre_completo, u.correo, r.nombre AS rol_nombre
+        SELECT u.id_usuario, u.nombre_completo, u.correo, r.nombre AS rol_nombre, u.fecha_ingreso
         FROM usuarios u
         INNER JOIN roles r ON u.id_rol = r.id_rol
         WHERE u.id_usuario <> $1;

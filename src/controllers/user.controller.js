@@ -27,8 +27,8 @@ const crearUsuario = async(req, res) =>{
             });
         }
         //ahora encriptamos la contraseña
-        const salt = bycrypt.genSaltSync();
-        const contraseniaEncrip = bycrypt.hashSync(contrasenia, salt);
+        const salt = bcrypt.genSaltSync();
+        const contraseniaEncrip = bcrypt.hashSync(contrasenia, salt);
         //console.log(contraseniaEncrip);
         const values = {
             nombre,
@@ -38,7 +38,8 @@ const crearUsuario = async(req, res) =>{
         }
         //console.log(values);
         const data = await crearUser(values);
-        console.log(data);
+        //console.log(data);
+
         return res.status(201).json({
             ok: true,
             msg: "Usuario creado correctamente.",
@@ -157,7 +158,7 @@ const obtenerTodosUsers = async(req, res) =>{
         return res.status(201).json({
             ok: true,
             msg: "Usuarios encontrados correctamente.",
-            usuario: todosLosUsers
+            usuarios: todosLosUsers
         });
     } catch (error) {
         console.error(error);
