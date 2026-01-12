@@ -1,0 +1,382 @@
+Guía de Rutas, Parámetros y Roles
+=================================
+
+Notas generales
+- Autenticación: cualquier ruta con "verificarRol" o "verificarJWT" requiere JWT válido. "verificarRol" además restringe por rol.
+- Validaciones: los parámetros marcados como "(requerido)" deben enviarse; "(opcional)" pueden omitirse.
+- Tipos: int = número entero; boolean = true/false; string = texto.
+
+
+Auth
+-----
+1) POST /auth/login
+	 - Roles: público (sin JWT)
+	 - Body:
+		 - correo (string, requerido, email válido)
+		 - contrasenia (string, requerido, fuerte; min 6 y con complejidad)
+	 - Acción: Inicia sesión y devuelve JWT.
+
+2) GET /auth/renovar
+	 - Roles: autenticado (cualquier rol)
+	 - Params: ninguno
+	 - Acción: Renueva JWT vigente.
+
+
+Usuarios
+--------
+1) POST /user/crear
+	 - Roles: Administrador
+	 - Body:
+		 - nombre (string, requerido, min 2)
+		 - correo (string, requerido, email válido)
+		 - contrasenia (string, requerido, fuerte)
+	 - Acción: Crea un usuario.
+
+2) PUT /user/actualizar/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - nombre (string, requerido, min 2)
+		 - correo (string, requerido, email válido)
+		 - contrasenia (string, opcional, fuerte)
+	 - Acción: Actualiza un usuario por id.
+
+3) DELETE /user/eliminar/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Body/Query:
+		 - correo (string, requerido, email válido)
+	 - Acción: Elimina un usuario por id.
+
+4) GET /user/usuario/:id
+	 - Roles: autenticado (cualquier rol)
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Obtiene un usuario por id.
+
+5) GET /user/todosUsuarios/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Lista todos los usuarios (según lógica del controlador).
+
+6) PUT /user/cambiarEstado/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Cambia el estado (activo/inactivo) del usuario.
+
+7) GET /user/todosRoles
+	 - Roles: Administrador
+	 - Params: ninguno
+	 - Acción: Lista todos los roles disponibles.
+
+8) GET /user/porUserRol
+	 - Roles: Administrador, Jefe
+	 - Query:
+		 - nombre (string, requerido)  // nombre del rol (por ej. "Tecnico")
+	 - Acción: Lista usuarios filtrados por nombre de rol.
+
+
+Incidencias
+-----------
+1) POST /incidencia/crear
+	 - Roles: Administrador, Jefe, Cliente
+	 - Body:
+		 - descripcion (string, requerido)
+		 - id_maquina (int, requerido)
+		 - id_tecnico (int, opcional)
+		 - id_jefe (int, opcional)
+		 - estado_nombre (string, requerido)
+		 - prioridad_nombre (string, requerido)
+	 - Acción: Crea una incidencia.
+
+2) GET /incidencia/mias
+	 - Roles: Administrador, Jefe, Cliente
+	 - Params: ninguno
+	 - Acción: Lista incidencias creadas por el usuario autenticado.
+
+3) GET /incidencia/todas
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista todas las incidencias.
+
+4) GET /incidencia/orden/prioridad
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista incidencias ordenadas por prioridad.
+
+5) GET /incidencia/por-estado/:nombre
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - nombre (string, requerido)
+	 - Acción: Lista incidencias filtradas por nombre de estado.
+
+6) GET /incidencia/por-prioridad/:nombre
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - nombre (string, requerido)
+	 - Acción: Lista incidencias filtradas por nombre de prioridad.
+
+7) GET /incidencia/:id
+	 - Roles: Administrador, Jefe, Tecnico, Cliente
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Obtiene una incidencia por id.
+
+8) PUT /incidencia/:id
+	 - Roles: autenticado (cualquier rol)  // requiere JWT
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - descripcion (string, requerido)
+		 - id_maquina (int, requerido)
+		 - id_tecnico (int, opcional)
+		 - id_jefe (int, opcional)
+		 - estado_nombre (string, requerido)
+		 - prioridad_nombre (string, requerido)
+	 - Acción: Actualiza una incidencia.
+
+9) DELETE /incidencia/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Elimina una incidencia por id.
+
+10) PUT /incidencia/:id/estado
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - estado_nombre (string, requerido)
+	 - Acción: Cambia el estado de una incidencia.
+
+11) PUT /incidencia/:id/prioridad
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - prioridad_nombre (string, requerido)
+	 - Acción: Cambia la prioridad de una incidencia.
+
+12) GET /incidencia/porJefe/:id_jefe
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id_jefe (int, requerido)
+	 - Acción: Devuelve conteo o listado de incidencias asociadas a un jefe (según controlador).
+
+13) GET /incidencia/porTecnico/:id_tecnico
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Path:
+		 - id_tecnico (int, requerido)
+	 - Acción: Devuelve conteo o listado de incidencias asignadas a un técnico (según controlador).
+
+
+Archivos (Incidencias)
+----------------------
+1) POST /incidencia/:id/archivo
+	 - Roles: autenticado (cualquier rol)  // requiere JWT
+	 - Path:
+		 - id (int, requerido)  // id de la incidencia
+	 - Form-Data:
+		 - archivo (file, requerido)  // tipos permitidos: jpeg, png, webp, pdf; tamaño ≤ 10 MB
+	 - Acción: Sube un archivo adjunto (imagen extra o PDF). No cambia la foto principal.
+
+2) POST /incidencia/:id/fotoPrincipal
+	 - Roles: autenticado (cualquier rol)  // requiere JWT
+	 - Path:
+		 - id (int, requerido)
+	 - Form-Data:
+		 - archivo (file, requerido)  // debe ser imagen (jpeg, png, webp, gif)
+	 - Acción: Sube una imagen y la establece como foto principal.
+
+3) GET /incidencia/:id/archivos
+	 - Roles: autenticado (cualquier rol)  // requiere JWT
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Lista archivos adjuntos de una incidencia.
+
+4) DELETE /incidencia/archivo/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)  // id del archivo
+	 - Acción: Elimina un adjunto.
+
+
+Máquinas
+--------
+1) POST /maquina/crear
+	 - Roles: Administrador
+	 - Body:
+		 - nombre (string, requerido)
+		 - modelo (string, requerido)
+		 - estado_nombre (string, requerido)
+		 - prioridad_cliente (int, opcional)
+		 - id_usuario (int, opcional)
+	 - Acción: Crea una máquina.
+
+2) PUT /maquina/actualizar/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - nombre (string, requerido)
+		 - modelo (string, requerido)
+		 - estado_nombre (string, requerido)
+		 - prioridad_cliente (int, opcional)
+		 - id_usuario (int, opcional)
+	 - Acción: Actualiza una máquina por id.
+
+3) GET /maquina/maquina/:id
+	 - Roles: Administrador, Jefe, Cliente
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Obtiene una máquina por id.
+
+4) GET /maquina/todas
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista todas las máquinas.
+
+5) GET /maquina/porUsuario/:id
+	 - Roles: Administrador, Jefe, Cliente
+	 - Path:
+		 - id (int, requerido)  // id de usuario
+	 - Acción: Lista máquinas asociadas a un usuario.
+
+6) GET /maquina/porEstado/:nombre
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - nombre (string, requerido)
+	 - Acción: Lista máquinas por estado.
+
+7) DELETE /maquina/eliminar/:id
+	 - Roles: Administrador
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Elimina una máquina por id.
+
+8) GET /maquina/estados
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista estados disponibles de máquina.
+
+9) PUT /maquina/:id/estado
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - estado_nombre (string, requerido)
+	 - Acción: Cambia el estado de una máquina.
+
+
+Mantenimientos
+--------------
+1) POST /mantenimiento/crear
+	 - Roles: Administrador, Jefe
+	 - Body:
+		 - periodo (string, requerido)
+		 - frecuencia (string, requerido)
+		 - genera_incidencia (boolean, opcional)
+		 - estado_nombre (string, requerido)
+		 - id_maquina (int, requerido)
+		 - id_jefe (int, opcional)
+	 - Acción: Crea un mantenimiento.
+
+2) PUT /mantenimiento/actualizar/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Body: (mismos campos que crear)
+	 - Acción: Actualiza un mantenimiento por id.
+
+3) GET /mantenimiento/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Obtiene un mantenimiento por id.
+
+4) GET /mantenimiento/todos
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista todos los mantenimientos.
+
+5) GET /mantenimiento/porMaquina/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)  // id de la máquina
+	 - Acción: Lista mantenimientos por máquina.
+
+6) DELETE /mantenimiento/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Elimina un mantenimiento por id.
+
+7) GET /mantenimiento/estados
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista estados disponibles de mantenimiento.
+
+8) PUT /mantenimiento/:id/estado
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - estado_nombre (string, requerido)
+	 - Acción: Cambia el estado de un mantenimiento.
+
+
+Informes
+--------
+1) POST /informe/crear
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Body:
+		 - texto (string, requerido)
+		 - tipo (string, requerido)
+		 - id_incidencia (int, requerido)
+		 - id_tecnico (int, opcional)
+	 - Acción: Crea un informe para una incidencia.
+
+2) PUT /informe/actualizar/:id
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Path:
+		 - id (int, requerido)
+	 - Body:
+		 - texto (string, requerido)
+		 - tipo (string, requerido)
+		 - id_incidencia (int, requerido)
+		 - id_tecnico (int, opcional)
+	 - Acción: Actualiza un informe por id.
+
+3) GET /informe/:id
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Obtiene un informe por id.
+
+4) GET /informe/por-incidencia/:id
+	 - Roles: Administrador, Jefe, Tecnico
+	 - Path:
+		 - id (int, requerido)  // id de la incidencia
+	 - Acción: Lista informes de una incidencia.
+
+5) GET /informe/por-tecnico/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)  // id del técnico
+	 - Acción: Lista informes creados por un técnico.
+
+6) GET /informe/todos
+	 - Roles: Administrador, Jefe
+	 - Params: ninguno
+	 - Acción: Lista todos los informes.
+
+7) DELETE /informe/:id
+	 - Roles: Administrador, Jefe
+	 - Path:
+		 - id (int, requerido)
+	 - Acción: Elimina un informe por id.
+

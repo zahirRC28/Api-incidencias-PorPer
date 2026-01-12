@@ -16,6 +16,13 @@ const login = async(req, res) =>{
                 msg: "No hay usuario con este email."
             });
         };
+
+        if(usuario.activo === false) {
+            return res.status(400).json({
+                ok: false,
+                msg: "El usuario no esta activo."
+            });
+        }
         //comprobamos que sea la misma contraseña
         const contraBien = await bycrypt.compare(contrasenia, usuario.contrasenia_hash);
         //console.log(contraBien);

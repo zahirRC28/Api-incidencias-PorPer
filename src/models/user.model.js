@@ -28,6 +28,34 @@ const actualizarUsuarioId = async({nombre, correo, contrasenia, rol}, id_user) =
         cliente.release();
     }
 };
+const activarUser = async(id_user) =>{
+    let cliente, result;
+    try {
+        cliente = await connect();
+        result = await cliente.query(queries.activarUser,[id_user]);
+        return result.rows[0];
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }finally{
+        cliente.release();
+    }
+};
+
+const desactivarUser = async(id_user)=>{
+    let cliente, result;
+    try {
+        cliente = await connect();
+        result = await cliente.query(queries.desactivarUser,[id_user]);
+        return result.rows[0];
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }finally{
+        cliente.release();
+    }
+};
+
 const eliminarUserEmail = async(correo, id_usuario) =>{
     let cliente, result;
     try {
@@ -35,11 +63,7 @@ const eliminarUserEmail = async(correo, id_usuario) =>{
 
         await cliente.query('BEGIN');
 
-        await cliente.query(queries.eliminarUserById_chat, [id_usuario]);
         await cliente.query(queries.eliminarUserById_notificaciones, [id_usuario]);
-        await cliente.query(queries.eliminarUserById_informes, [id_usuario]);
-        await cliente.query(queries.eliminarUserById_incidencias, [id_usuario]);
-
         result = await cliente.query(queries.eliminarUserByEmail,[correo]);
         
         await cliente.query('COMMIT');
@@ -136,6 +160,20 @@ const existeCorreo = async(correo)=>{
     }
 }
 
+const obtenerUsuariosPorRolNombre = async(nombreRol) =>{
+    let cliente, result;
+    try {
+        cliente = await connect();
+        result = await cliente.query(queries.usuariosPorRolNombre, [nombreRol]);
+        return result.rows;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    } finally {
+        cliente.release();
+    }
+}
+
 module.exports = {
     crearUser,
     actualizarUsuarioId,
@@ -145,5 +183,8 @@ module.exports = {
     obtenerRolByNombre,
     obtenerRolByid,
     buscarUserByid,
-    existeCorreo
+    existeCorreo,
+    activarUser,
+    desactivarUser,
+    obtenerUsuariosPorRolNombre
 }
