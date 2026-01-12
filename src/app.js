@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 
 //CONFIGURACION CORS
-const frontUrlDes = '';
+const frontUrlDes = 'https://app-incidencias-por-per.vercel.app';
 const localURL = 'http://localhost:5173'
 const whitelist = [frontUrlDes, localURL];
 
