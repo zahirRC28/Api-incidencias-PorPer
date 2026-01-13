@@ -11,10 +11,7 @@ const PDFDocument = require('pdfkit');
 const incidenciaModel = require('../models/incidencia.model');
 const maquinaModel = require('../models/maquina.model');
 const archivoModel = require('../models/archivo.model');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const http = require('http');
+
 
 const informeCrear = async(req, res) =>{
 	const { texto, tipo, id_incidencia, id_tecnico } = req.body;
@@ -158,16 +155,6 @@ const generarPdfPorIncidencia = async (req, res) => {
 		const informes = await obtenerInformesPorIncidencia(id);
 		const archivos = await archivoModel.obtenerArchivosPorIncidencia(id);
 
-		// No usamos buffer de imagen; en su lugar mostraremos las URLs en el PDF
-		const baseUrl = process.env.BASE_URL || '';
-		const normalizePath = (u) => {
-			if (!u) return '';
-			if (u.startsWith('http://') || u.startsWith('https://')) return u;
-			// ensure leading slash
-			const rel = u.startsWith('/') ? u : '/' + u;
-			if (!baseUrl) return rel;
-			return baseUrl.replace(/\/$/, '') + rel;
-		};
 
 		const doc = new PDFDocument({ size: 'A4', margin: 50 });
 		const filename = `informe_incidencia_${id}.pdf`;
@@ -202,7 +189,7 @@ const generarPdfPorIncidencia = async (req, res) => {
 			doc.addPage();
 			doc.fontSize(14).text('Foto principal de la incidencia (URL)', { align: 'left' });
 			doc.moveDown(0.5);
-			doc.fontSize(12).text(normalizePath(incidencia.foto_url));
+			doc.fontSize(12).text(incidencia.foto_url);
 			doc.moveDown();
 		}
 
@@ -224,26 +211,25 @@ const generarPdfPorIncidencia = async (req, res) => {
 		doc.addPage();
 		doc.fontSize(14).text('Archivos adjuntos');
 		doc.moveDown(0.5);
+
 		if (!archivos || archivos.length === 0) {
 			doc.fontSize(12).text('No hay archivos adjuntos.');
 		} else {
 			for (let i = 0; i < archivos.length; i++) {
-				const a = archivos[i];
-				doc.fontSize(12).text(`${i + 1}. ${a.nombre_original || a.url}`);
-				doc.text(`Tipo MIME: ${a.mime_type || 'N/A'}`);
-				doc.text(`Tamaño: ${a.tamano || 'N/A'}`);
-				// mostrar URL; marcar si coincide con la foto principal
-				const isPrincipal = incidencia.foto_url && (incidencia.foto_url.replace(/^\/+/, '') === (a.url || '').replace(/^\/+/, ''));
-				doc.text(`URL: ${normalizePath(a.url)}`);
-				if (isPrincipal) {
-					doc.text('(Imagen principal)');
-				}
+				const arch = archivos[i];
+				doc.fontSize(12).text(`${i + 1}. ${arch.nombre_original || arch.url}`);
+				doc.text(`Tipo MIME: ${arch.mime_type || 'N/A'}`);
+				doc.text(`Tamaño: ${arch.tamano || 'N/A'}`);
+				doc.text(`URL: ${arch.url}`); // URL completa de Cloudinary
+				const isPrincipal = incidencia.foto_url && incidencia.foto_url === arch.url;
+				if (isPrincipal) doc.text('(Imagen principal)');
 				doc.moveDown();
 			}
 		}
 
 		// terminar PDF
 		doc.end();
+
 	} catch (error) {
 		console.error(error);
 		const payload = { ok: false, msg: 'Error generando PDF.' };

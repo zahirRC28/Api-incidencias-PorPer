@@ -1,5 +1,5 @@
-const path = require('path');
-const fs = require('fs');
+//const path = require('path');
+//const fs = require('fs');
 const { crearArchivoIncidencia, eliminarArchivoById, obtenerArchivosPorIncidencia } = require('../models/archivo.model');
 const { obtenerIncidenciaById, actualizarFotoPrincipal } = require('../models/incidencia.model');
 const cloudinary = require('../configs/cloudinary');
@@ -28,7 +28,7 @@ const subirArchivo= async(req, res) =>{
 			// Guardar la URL pública en la base de datos
 			const result = await cloudinary.uploader.upload(
 				`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`,
-				{ folder: 'incidencias' }
+				{ folder: 'incidencias', resource_type: 'auto' }
 			);
 			
 			const archivo = await crearArchivoIncidencia({
