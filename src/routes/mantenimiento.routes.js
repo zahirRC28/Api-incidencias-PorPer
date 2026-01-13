@@ -7,7 +7,6 @@ const { verificarRol } = require('../middlewares/verificarRol');
 const { checksValidaciones } = require('../middlewares/checkValidations');
 const { mantenimeintoCrear, mantenimientoActualizar, obtenerUnoMantenimiento, listarTodosMantenimiento, listarMantenimientoPorMaquina, mantenimeintoEliminar, estadosMantenimiento, mantenimientoCambiarEstado } = require('../controllers/mantenimiento.controller');
 
-// Crear mantenimiento
 router.post('/mantenimiento/crear', [
   verificarRol(['Administrador', 'Jefe']),
   check('periodo')
@@ -28,7 +27,6 @@ router.post('/mantenimiento/crear', [
   checksValidaciones
 ], mantenimeintoCrear);
 
-// Actualizar mantenimiento
 router.put('/mantenimiento/actualizar/:id', [
   verificarRol(['Administrador', 'Jefe']),
   check('id')
@@ -52,7 +50,6 @@ router.put('/mantenimiento/actualizar/:id', [
   checksValidaciones
 ], mantenimientoActualizar);
 
-// Obtener un mantenimiento
 router.get('/mantenimiento/:id', [
   verificarRol(['Administrador', 'Jefe']),
   check('id')
@@ -61,12 +58,10 @@ router.get('/mantenimiento/:id', [
   checksValidaciones
 ], obtenerUnoMantenimiento);
 
-// Listar todos los mantenimientos
 router.get('/mantenimiento/todos', [
   verificarRol(['Administrador', 'Jefe'])
 ], listarTodosMantenimiento);
 
-// Listar mantenimientos por máquina
 router.get('/mantenimiento/porMaquina/:id', [
   verificarRol(['Administrador', 'Jefe']),
   check('id')
@@ -75,7 +70,6 @@ router.get('/mantenimiento/porMaquina/:id', [
   checksValidaciones
 ], listarMantenimientoPorMaquina);
 
-// Eliminar mantenimiento
 router.delete('/mantenimiento/:id', [
   verificarRol(['Administrador', 'Jefe']),
   check('id')
@@ -84,12 +78,10 @@ router.delete('/mantenimiento/:id', [
   checksValidaciones
 ], mantenimeintoEliminar);
 
-// Estados de mantenimiento
 router.get('/mantenimiento/estados', [
   verificarRol(['Administrador', 'Jefe'])
 ], estadosMantenimiento);
 
-// Cambiar estado de mantenimiento
 router.put('/mantenimiento/:id/estado', [
   verificarRol(['Administrador', 'Jefe']),
   check('id')

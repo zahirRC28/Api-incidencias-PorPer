@@ -8,7 +8,6 @@ const { checksValidaciones } = require('../middlewares/checkValidations');
 const { incidenciaCrear, actualizarIncidencia, eliminarIncidencia, miasIncidencias, obtenerUnaIncidencia, todasIncidencias, incidenciasOrdenPrioridad, incidenciasPorEstado, incidenciasPorPrioridad, cambiarEstado, cambiarPrioridad, incidenciasTieneJefe, incidenciasTieneTecnico, todasEstadosIncidencia, todasPrioridadesIncidencia, asignarTecnicoCon, asignarJefeCon } = require('../controllers/incidencia.controller');
 
 
-// Crear incidencia
 router.post('/incidencia/crear', [
 	verificarRol(['Administrador', 'Jefe', 'Cliente']),
 	check('titulo')
@@ -22,22 +21,18 @@ router.post('/incidencia/crear', [
 	checksValidaciones
 ], incidenciaCrear);
 
-// Mis incidencias
 router.get('/incidencia/mias', [
 	verificarRol(['Administrador', 'Jefe', 'Cliente'])
 ],	miasIncidencias);
 
-// Todas las incidencias (solo Admin/Jefe)
 router.get('/incidencia/todas', [
 	verificarRol(['Administrador', 'Jefe'])
 ], todasIncidencias);
 
-// Incidencias ordenadas por prioridad (solo Admin/Jefe)
 router.get('/incidencia/orden/prioridad', [
 	verificarRol(['Administrador', 'Jefe'])
 ], incidenciasOrdenPrioridad);
 
-// Incidencias filtradas por estado (solo Admin/Jefe)
 router.get('/incidencia/por-estado/:nombre', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('nombre')
@@ -45,7 +40,6 @@ router.get('/incidencia/por-estado/:nombre', [
 	checksValidaciones
 ], incidenciasPorEstado);
 
-// Incidencias filtradas por prioridad (solo Admin/Jefe)
 router.get('/incidencia/por-prioridad/:nombre', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('nombre')
@@ -53,7 +47,6 @@ router.get('/incidencia/por-prioridad/:nombre', [
 	checksValidaciones
 ], incidenciasPorPrioridad);
 
-// Obtener una incidencia por id
 router.get('/incidencia/:id', [
 	verificarRol(['Administrador', 'Jefe','Tecnico', 'Cliente']),
 	check('id')
@@ -62,7 +55,6 @@ router.get('/incidencia/:id', [
 	checksValidaciones
 ], obtenerUnaIncidencia);
 
-// Actualizar incidencia
 router.put('/incidencia/:id', [
 	verificarJWT,
 	check('id')
@@ -89,7 +81,6 @@ router.put('/incidencia/:id', [
 	checksValidaciones
 ], actualizarIncidencia);
 
-// Eliminar incidencia
 router.delete('/incidencia/:id', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id')
@@ -98,7 +89,6 @@ router.delete('/incidencia/:id', [
 	checksValidaciones
 ], eliminarIncidencia);
 
-// Cambiar estado de incidencia
 router.put('/incidencia/:id/estado', [
 	verificarRol(['Administrador', 'Jefe', 'Tecnico']),
 	check('id')
@@ -109,7 +99,6 @@ router.put('/incidencia/:id/estado', [
 	checksValidaciones
 ], cambiarEstado);
 
-// Cambiar prioridad de incidencia
 router.put('/incidencia/:id/prioridad', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id')
@@ -119,7 +108,7 @@ router.put('/incidencia/:id/prioridad', [
 		.notEmpty().withMessage('prioridad_nombre es obligatorio').bail(),
 	checksValidaciones
 ], cambiarPrioridad);
-// Asignar técnico a una incidencia
+
 router.put('/incidencia/:id/asignar-tecnico', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id')
@@ -130,7 +119,7 @@ router.put('/incidencia/:id/asignar-tecnico', [
 		.isInt().withMessage('id_tecnico debe ser entero').bail(),
 	checksValidaciones
 ], asignarTecnicoCon);
-// Asignar jefe a una incidencia
+
 router.put('/incidencia/:id/asignar-jefe', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id')
@@ -141,7 +130,7 @@ router.put('/incidencia/:id/asignar-jefe', [
 		.isInt().withMessage('id_jefe debe ser entero').bail(),
 	checksValidaciones
 ], asignarJefeCon);
-//Incidencias por Jefe
+
 router.get('/incidencia/porJefe/:id_jefe', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id_jefe')
@@ -149,7 +138,7 @@ router.get('/incidencia/porJefe/:id_jefe', [
 		.isInt().withMessage('id debe ser entero').bail(),
 	checksValidaciones
 ], incidenciasTieneJefe);
-//Incidencias por tecnico
+
 router.get('/incidencia/porTecnico/:id_tecnico', [
 	verificarRol(['Administrador', 'Jefe', 'Tecnico']),
 	check('id_tecnico')
@@ -158,12 +147,10 @@ router.get('/incidencia/porTecnico/:id_tecnico', [
 	checksValidaciones
 ], incidenciasTieneTecnico);
 
-//todas los estados de incidencia
 router.get('/incidencia/todas/estados', [
 	verificarRol(['Administrador', 'Jefe', 'Tecnico', 'Cliente'])
 ], todasEstadosIncidencia);
 
-//todas las prioridades de incidencia
 router.get('/incidencia/todas/prioridades', [
 	verificarRol(['Administrador', 'Jefe','Cliente'])
 ], todasPrioridadesIncidencia);

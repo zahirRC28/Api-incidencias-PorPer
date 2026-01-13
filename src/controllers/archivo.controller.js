@@ -15,16 +15,6 @@ const subirArchivo= async(req, res) =>{
 				return res.status(400).json({ ok: false, msg: 'No se subió ningún archivo.' });
 			}
 
-
-			// const url = `/uploads/incidencias/${req.file.filename}`;
-			// const archivo = await crearArchivoIncidencia({
-			// 	id_incidencia: parseInt(id, 10),
-			// 	url,
-			// 	mime_type: req.file.mimetype,
-			// 	nombre_original: req.file.originalname,
-			// 	tamano: req.file.size
-			// });
-
 			// Guardar la URL pública en la base de datos
 			const result = await cloudinary.uploader.upload(
 				`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`,
@@ -70,13 +60,6 @@ const eliminarArchivo= async(req, res) =>{
 		if (!archivo) {
 			return res.status(404).json({ ok: false, msg: 'Archivo no encontrado.' });
 		}
-
-		// // borrar archivo físico si existe
-		// if (archivo.url) {
-		// 	const p = path.join(__dirname, '..', '..', archivo.url.replace('/', path.sep));
-		// 	fs.unlink(p, () => {});
-		// }
-
 		// Eliminar de Cloudinary usando la public_id
 		if (archivo.url) {
 		const parts = archivo.url.split('/');

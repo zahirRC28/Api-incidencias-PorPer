@@ -79,6 +79,7 @@ router.get('/user/usuario/:id',[
         .bail()
     ,checksValidaciones
 ], obtenerUser);
+
 router.get('/user/todosUsuarios/:id',[
     verificarRol(['Administrador']),
     check('id')
@@ -103,7 +104,6 @@ router.put('/user/cambiarEstado/:id',[
 
 router.get('/user/todosRoles',verificarRol(['Administrador']),todosRoles);
 
-// Usuarios por rol (p. ej., Tecnico/Jefe/Administrador)
 router.post('/user/porUserRol',[
     verificarRol(['Administrador','Jefe']),
     check('nombre')

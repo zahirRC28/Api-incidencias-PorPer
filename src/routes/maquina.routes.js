@@ -7,7 +7,6 @@ const { verificarRol } = require('../middlewares/verificarRol');
 const { checksValidaciones } = require('../middlewares/checkValidations');
 const { maquinaCrear, maquinaActualizar, maquinaEliminar, obtenerUnaMaquina, listarTodasMaquinas, listarMaquinasPorUsuario, listarManquinasPorEstado, estadosMaquina, cambiarMaquinaEstado } = require('../controllers/maquina.controller');
 
-// Crear máquina
 router.post('/maquina/crear', [
   verificarRol(['Administrador']),
   check('nombre')
@@ -26,7 +25,6 @@ router.post('/maquina/crear', [
   checksValidaciones
 ], maquinaCrear);
 
-// Actualizar máquina
 router.put('/maquina/actualizar/:id', [
   verificarRol(['Administrador']),
   check('id')
@@ -50,7 +48,6 @@ router.put('/maquina/actualizar/:id', [
   checksValidaciones
 ], maquinaActualizar);
 
-// Obtener una máquina
 router.get('/maquina/maquina/:id', [
   verificarRol(['Administrador', 'Jefe','Cliente']),
   check('id')
@@ -59,12 +56,10 @@ router.get('/maquina/maquina/:id', [
   checksValidaciones
 ], obtenerUnaMaquina);
 
-// Listar todas las máquinas
 router.get('/maquina/todas', [
   verificarRol(['Administrador', 'Jefe', 'Tecnico'])
 ], listarTodasMaquinas);
 
-// Listar máquinas por usuario
 router.get('/maquina/porUsuario/:id', [
   verificarRol(['Administrador', 'Cliente']),
   check('id')
@@ -73,14 +68,12 @@ router.get('/maquina/porUsuario/:id', [
   checksValidaciones
 ], listarMaquinasPorUsuario);
 
-// Listar máquinas por estado
 router.get('/maquina/porEstado/:nombre', [
   verificarRol(['Administrador', 'Jefe']),
   check('nombre').notEmpty().withMessage('nombre del estado es obligatorio').bail(),
   checksValidaciones
 ], listarManquinasPorEstado);
 
-// Eliminar máquina
 router.delete('/maquina/eliminar/:id', [
   verificarRol(['Administrador']),
   check('id')
@@ -89,12 +82,10 @@ router.delete('/maquina/eliminar/:id', [
   checksValidaciones
 ], maquinaEliminar);
 
-// Estados de máquina
 router.get('/maquina/estados', [
   verificarRol(['Administrador', 'Jefe'])
 ], estadosMaquina);
 
-// Cambiar estado de máquina
 router.put('/maquina/:id/estado', [
   verificarRol(['Administrador', 'Jefe', 'Tecnico', 'Cliente']),
   check('id')

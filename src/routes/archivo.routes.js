@@ -9,22 +9,6 @@ const { verificarRol } = require('../middlewares/verificarRol');
 const { checksValidaciones } = require('../middlewares/checkValidations');
 const { subirArchivo, listarArchivos, eliminarArchivo, subirFotoPrincipal } = require('../controllers/archivo.controller');
 
-// Multer for attachments (images + pdf)
-// const storage = multer.diskStorage({
-// 	destination: (req, file, cb) => {
-// 		cb(null, path.join(__dirname, '..', '..', 'uploads', 'incidencias'));
-// 	},
-// 	filename: (req, file, cb) => {
-// 		const ext = path.extname(file.originalname);
-// 		const base = path.basename(file.originalname, ext)
-// 			.toLowerCase()
-// 			.replace(/[^a-z0-9]+/g, '-')
-// 			.replace(/^-+|-+$/g, '');
-// 		const unique = Date.now();
-// 		cb(null, `${base}-${unique}${ext}`);
-// 	}
-// });
-
 const storage = multer.memoryStorage();
 
 const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
@@ -40,15 +24,13 @@ const attachmentFilter = (req, file, cb) => {
 };
 
 
-// const uploadAttachments = multer({ storage, fileFilter: attachmentFilter, limits: { fileSize: 10 * 1024 * 1024 } });
-
 const uploadAttachments = multer({
   storage,
   fileFilter: attachmentFilter,
   limits: { fileSize: 10 * 1024 * 1024 }
 });
 
-// Upload attachment to an incidencia
+
 router.post('/incidencia/:id/archivo', [
 	verificarJWT,
 	uploadAttachments.single('archivo'),
@@ -58,7 +40,7 @@ router.post('/incidencia/:id/archivo', [
 	checksValidaciones
 ], subirArchivo);
 
-// Upload principal image and set it as principal automatically
+
 router.post('/incidencia/:id/fotoPrincipal', [
 	verificarJWT,
 	uploadAttachments.single('archivo'),
@@ -68,7 +50,7 @@ router.post('/incidencia/:id/fotoPrincipal', [
 	checksValidaciones
 ], subirFotoPrincipal);
 
-// List attachments of an incidencia
+
 router.get('/incidencia/:id/archivos', [
 	verificarJWT,
 	check('id')
@@ -77,7 +59,7 @@ router.get('/incidencia/:id/archivos', [
 	checksValidaciones
 ], listarArchivos);
 
-// Delete an attachment (by id_archivo)
+
 router.delete('/incidencia/archivo/:id', [
 	verificarRol(['Administrador', 'Jefe']),
 	check('id')

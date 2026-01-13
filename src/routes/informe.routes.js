@@ -7,7 +7,6 @@ const { verificarRol } = require('../middlewares/verificarRol');
 const { checksValidaciones } = require('../middlewares/checkValidations');
 const { informeCrear, informeActualizar, obtenerUnoInforme, listarInformePorIncidencia, listarInformePorTecnico, listarTodosInformes, informeEliminar, generarPdfPorIncidencia } = require('../controllers/informe.controller');
 
-// Crear informe
 router.post('/informe/crear', [
   verificarRol(['Administrador','Jefe','Tecnico']),
   check('texto')
@@ -23,7 +22,6 @@ router.post('/informe/crear', [
   checksValidaciones
 ], informeCrear);
 
-// Actualizar informe
 router.put('/informe/actualizar/:id', [
   verificarRol(['Administrador','Jefe','Tecnico']),
   check('id')
@@ -42,7 +40,6 @@ router.put('/informe/actualizar/:id', [
   checksValidaciones
 ], informeActualizar);
 
-// Obtener informe por id
 router.get('/informe/:id', [
   verificarRol(['Administrador','Jefe','Tecnico']),
   check('id')
@@ -51,7 +48,6 @@ router.get('/informe/:id', [
   checksValidaciones
 ], obtenerUnoInforme);
 
-// Listar informes por incidencia
 router.get('/informe/por-incidencia/:id', [
   verificarRol(['Administrador','Jefe','Tecnico']),
   check('id')
@@ -60,7 +56,6 @@ router.get('/informe/por-incidencia/:id', [
   checksValidaciones
 ], listarInformePorIncidencia);
 
-// Generar PDF con incidencia + máquina + informes
 router.get('/informe/por-incidencia/:id/pdf', [
   verificarRol(['Administrador','Jefe','Tecnico']),
   check('id')
@@ -69,7 +64,6 @@ router.get('/informe/por-incidencia/:id/pdf', [
   checksValidaciones
 ], generarPdfPorIncidencia);
 
-// Listar informes por técnico
 router.get('/informe/por-tecnico/:id', [
   verificarRol(['Administrador','Jefe']),
   check('id')
@@ -78,12 +72,10 @@ router.get('/informe/por-tecnico/:id', [
   checksValidaciones
 ], listarInformePorTecnico);
 
-// Listar todos los informes
 router.get('/informe/todos', [
   verificarRol(['Administrador','Jefe'])
 ], listarTodosInformes);
 
-// Eliminar informe
 router.delete('/informe/:id', [
   verificarRol(['Administrador','Jefe']),
   check('id')

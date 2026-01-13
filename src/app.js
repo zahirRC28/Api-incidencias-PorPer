@@ -1,6 +1,8 @@
 //IMPORTACIONES
 const express = require("express");
 const cors = require("cors");
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 require('dotenv').config();
 
 const app = express();
@@ -35,6 +37,9 @@ app.use(cors(corsOptions));
 //hacer configuracion del multer
 // Servir archivos estáticos subidos (imágenes)
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// Swagger Docs
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //ROUTES
 app.use('/api/v1', require('./routes/auth.routes'));
