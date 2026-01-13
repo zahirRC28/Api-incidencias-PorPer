@@ -96,7 +96,7 @@ router.get('/maquina/estados', [
 
 // Cambiar estado de máquina
 router.put('/maquina/:id/estado', [
-  verificarRol(['Administrador', 'Jefe', 'Cliente']),
+  verificarRol(['Administrador', 'Jefe', 'Tecnico', 'Cliente']),
   check('id')
     .notEmpty().withMessage('Se necesita el Id de la maquina').bail()
     .isInt().withMessage('id debe ser entero').bail(),
