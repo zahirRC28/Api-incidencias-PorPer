@@ -9,6 +9,7 @@ const { verificarRol } = require('../middlewares/verificarRol');
 const { checksValidaciones } = require('../middlewares/checkValidations');
 const { subirArchivo, listarArchivos, eliminarArchivo, subirFotoPrincipal } = require('../controllers/archivo.controller');
 
+//opción de almacenamiento que guarda los archivos subidos directamente en la memoria RAM del servidor
 const storage = multer.memoryStorage();
 
 const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
